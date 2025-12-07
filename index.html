@@ -125,46 +125,7 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   }
 
-  /* Image Slider */
-  .image-slider {
-    position: relative;
-    width: 100%;
-    height: 260px;
-    overflow: hidden;
-  }
-
-  .image-slider img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-
-  .image-slider img.active {
-    opacity: 1;
-  }
-
-  .image-slider button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    padding: 5px 12px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-
-  .image-slider .prev { left: 10px; }
-  .image-slider .next { right: 10px; }
-
-  /* Media & Video */
+  /* Media */
   .product-card img,
   .product-card video {
     width: 100%;
@@ -214,6 +175,7 @@
     color: white;
   }
 </style>
+
 </head>
 <body>
 
@@ -222,6 +184,7 @@
   <p>Product Promotion & Showcase</p>
 </header>
 
+<!-- Navigation Bar -->
 <nav>
   <ul>
     <li><a href="#">Home</a></li>
@@ -244,7 +207,7 @@
 
     <!-- PRODUCT 1 -->
     <div class="product-card">
-      <video src="https://www.dropbox.com/scl/fi/6k453i98wamm9dltit1qk/Video-Dec-07-2025-1-50-56-PM.mp4?raw=1" autoplay muted loop playsinline></video>
+      <video src="https://www.dropbox.com/scl/fi/6k453i98wamm9dltit1qk/Video-Dec-07-2025-1-50-56-PM.mp4?rlkey=hb8n5yfyut0nut4j6ve1rcp02&st=08rnslig&raw=1" autoplay muted loop playsinline></video>
       <div class="product-info">
         <h3>Movado</h3>
         <p>Movado Bold Quest Automatic Watch, Swiss Self-Winding Movement, Stainless Steel Bracelet 39mm</p>
@@ -254,7 +217,7 @@
 
     <!-- PRODUCT 2 -->
     <div class="product-card">
-      <video src="https://www.dropbox.com/scl/fi/kkexif6ogh0licixgshp0/Video-Dec-07-2025-1-51-29-PM.mp4?raw=1" autoplay muted loop playsinline></video>
+      <video src="https://www.dropbox.com/scl/fi/kkexif6ogh0licixgshp0/Video-Dec-07-2025-1-51-29-PM.mp4?rlkey=se7imx0rw0ttkkhmpqejjf9qw&st=1iop8zxg&raw=1" autoplay muted loop playsinline></video>
       <div class="product-info">
         <h3>Movado</h3>
         <p>Movado Museum Classic Men's Automatic Watch, Stainless Steel Bracelet, Self-Winding Luxury Timepiece - 40mm</p>
@@ -264,33 +227,27 @@
 
     <!-- PRODUCT 3 -->
     <div class="product-card">
-      <video src="https://www.dropbox.com/scl/fi/xeji7n21uuid9d18tx0ie/Video-Dec-07-2025-2-34-31-PM.mov?raw=1" autoplay muted loop playsinline></video>
+      <video src="https://www.dropbox.com/scl/fi/xeji7n21uuid9d18tx0ie/Video-Dec-07-2025-2-34-31-PM.mov?rlkey=cs65m2can950idfofdkh67bgd&st=y7jxtpob&raw=1" autoplay muted loop playsinline></video>
       <div class="product-info">
         <h3>Apple IPAD</h3>
-        <p>Apple iPad Air 11-inch with M3 chip, Liquid Retina Display, 128GB, 12MP Front/Back Camera, Wi-Fi 6E, Touch ID</p>
+        <p>Apple iPad Air 11-inch with M3 chip Built for Apple Intelligence, Liquid Retina Display, 128GB, 12MP Front/Back Camera, Wi-Fi 6E, Touch ID, All-Day Battery Life — Purple</p>
         <a href="https://amzn.to/4pw0Rb6">Buy Now</a>
       </div>
     </div>
 
-    <!-- PRODUCT 4 WITH SLIDER -->
+    <!-- PRODUCT 4 -->
     <div class="product-card">
-      <div class="image-slider">
-        <img src="https://www.dropbox.com/scl/fi/bc6br0bzsatt064991vrl/Photo-Dec-07-2025-2-42-00-PM.jpg?raw=1" class="active" />
-        <img src="https://www.dropbox.com/scl/fi/ic9biid9wcylej3phemoz/Photo-Dec-07-2025-2-42-12-PM.jpg?raw=1" />
-        <img src="https://www.dropbox.com/scl/fi/0g2b5mrad7ty5cuyk4oaa/Photo-Dec-07-2025-2-42-38-PM.jpg?raw=1" />
-        <button class="prev">&#10094;</button>
-        <button class="next">&#10095;</button>
-      </div>
+      <img src="https://www.dropbox.com/scl/fi/bc6br0bzsatt064991vrl/Photo-Dec-07-2025-2-42-00-PM.jpg?rlkey=sxlstw56w5y480kujgvnckmkp&st=m93k8uax&raw=1" alt="APPLE IPAD AIR" />
       <div class="product-info">
         <h3>APPLE IPAD AIR</h3>
-        <p>Apple iPad Air 11-inch with M3 chip, Liquid Retina Display, 128GB, 12MP Front/Back Camera, Wi-Fi 6E, Touch ID, All-Day Battery Life — Purple</p>
+        <p>Apple iPad Air 11-inch with M3 chip Built for Apple Intelligence, Liquid Retina Display, 128GB, 12MP Front/Back Camera, Wi-Fi 6E, Touch ID, All-Day Battery Life — Purple</p>
         <a href="https://amzn.to/4pw0Rb6">Buy Now</a>
       </div>
     </div>
 
     <!-- PRODUCT 5 -->
     <div class="product-card">
-      <img src="https://via.placeholder.com/400x260?text=Bag" />
+      <img src="https://via.placeholder.com/400x260?text=Bag" alt="Designer Bag" />
       <div class="product-info">
         <h3>Designer Bag</h3>
         <p>High-end luxury leather bag.</p>
@@ -310,7 +267,7 @@
 
     <!-- PRODUCT 7 -->
     <div class="product-card">
-      <img src="https://via.placeholder.com/400x260?text=Glasses" />
+      <img src="https://via.placeholder.com/400x260?text=Glasses" alt="Designer Sunglasses" />
       <div class="product-info">
         <h3>Designer Sunglasses</h3>
         <p>UV protection, sleek modern style.</p>
@@ -330,7 +287,7 @@
 
     <!-- PRODUCT 9 -->
     <div class="product-card">
-      <img src="https://via.placeholder.com/400x260?text=Camera" />
+      <img src="https://via.placeholder.com/400x260?text=Camera" alt="HD Camera" />
       <div class="product-info">
         <h3>HD Camera</h3>
         <p>4K resolution, perfect for content creators.</p>
@@ -355,45 +312,16 @@
   © 2025 KhanceptDesigns – All Rights Reserved
 </footer>
 
-<!-- SEARCH & SLIDER SCRIPT -->
+<!-- SEARCH FILTER SCRIPT -->
 <script>
-  // Search functionality
   document.getElementById("searchBar").addEventListener("keyup", function() {
     let filter = this.value.toLowerCase();
     let cards = document.querySelectorAll(".product-card");
+
     cards.forEach(card => {
       let text = card.innerText.toLowerCase();
       card.style.display = text.includes(filter) ? "block" : "none";
     });
-  });
-
-  // Slider functionality with auto-slide
-  document.querySelectorAll('.product-card').forEach(card => {
-    const images = card.querySelectorAll('.image-slider img');
-    const prev = card.querySelector('.prev');
-    const next = card.querySelector('.next');
-    if(!images.length) return; // Skip cards without slider
-    let current = 0;
-
-    function showImage(index) {
-      images.forEach((img, i) => img.classList.toggle('active', i === index));
-    }
-
-    // Manual arrows
-    prev.addEventListener('click', () => {
-      current = (current - 1 + images.length) % images.length;
-      showImage(current);
-    });
-    next.addEventListener('click', () => {
-      current = (current + 1) % images.length;
-      showImage(current);
-    });
-
-    // Auto-slide every 4 seconds
-    setInterval(() => {
-      current = (current + 1) % images.length;
-      showImage(current);
-    }, 4000);
   });
 </script>
 
