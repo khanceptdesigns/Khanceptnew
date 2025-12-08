@@ -5,13 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KhanceptDesigns – Home</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
     body {
         margin: 0;
-        font-family: Poppins, sans-serif;
-        background: #f8f8f8;
+        font-family: "Poppins", sans-serif;
+        background: #f4f4f4;
+    }
+
+    /* HEADER */
+    header {
+        padding: 60px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #000 0%, #222 100%);
+        color: white;
+    }
+
+    header h1 {
+        font-size: 3rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -1px;
+    }
+
+    nav {
+        background: #000;
+        padding: 15px 0;
+        text-align: center;
+    }
+
+    nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline-block;
+        margin: 0 20px;
+    }
+
+    nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    nav ul li a:hover {
+        color: #aaa;
     }
 
     /* ---------------- SLIDESHOW ---------------- */
@@ -42,7 +85,6 @@
         opacity: 1;
     }
 
-    /* ARROWS */
     .arrow {
         position: absolute;
         top: 50%;
@@ -76,10 +118,11 @@
         padding: 20px;
     }
 
-    h1 {
+    h1.section-heading {
         text-align: center;
-        font-weight: 600;
+        font-weight: 700;
         margin-bottom: 30px;
+        font-size: 2rem;
     }
 
     .category-grid {
@@ -105,7 +148,6 @@
         transform: translateY(-5px);
     }
 
-    /* PRODUCT SECTION */
     .product-section {
         display: none;
         margin-top: 50px;
@@ -161,34 +203,41 @@
 
 <body>
 
-<!-- ========== SLIDESHOW HEADER ========== -->
-<div class="slideshow-container">
+<header>
+  <h1>KhanceptDesigns</h1>
+  <p>Shop Categories & Collections</p>
+</header>
 
-    <!-- SLIDE 1 -->
+<!-- NAVIGATION -->
+<nav>
+  <ul>
+    <li><a href="home.html">Home</a></li>
+    <li><a href="index.html#featured">Featured</a></li>
+    <li><a href="sale.html">Sale</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- SLIDESHOW -->
+<div class="slideshow-container">
     <div class="slide active-slide">
         <img src="https://via.placeholder.com/1600x600?text=Welcome+to+KhanceptDesigns">
     </div>
-
-    <!-- SLIDE 2 -->
     <div class="slide">
         <img src="https://via.placeholder.com/1600x600?text=Shop+Our+Latest+Collections">
     </div>
-
-    <!-- SLIDE 3 -->
     <div class="slide">
         <img src="https://via.placeholder.com/1600x600?text=Exclusive+Deals+Available+Now">
     </div>
 
-    <!-- ARROWS -->
     <div class="arrow arrow-left" onclick="moveSlide(-1)">&#10094;</div>
     <div class="arrow arrow-right" onclick="moveSlide(1)">&#10095;</div>
-
 </div>
 
-<!-- ========== CATEGORIES BELOW SLIDESHOW ========== -->
+<!-- CATEGORY GRID -->
 <div class="container">
 
-    <h1>Shop by Category</h1>
+    <h1 class="section-heading">Shop by Category</h1>
 
     <div class="category-grid">
         <div class="category-tile" onclick="openCategory('watches')">Watches</div>
@@ -197,7 +246,6 @@
         <div class="category-tile" onclick="openCategory('accessories')">Accessories</div>
     </div>
 
-    <!-- CATEGORY PRODUCT SECTIONS -->
     <div id="watches" class="product-section"></div>
     <div id="electronics" class="product-section"></div>
     <div id="beauty" class="product-section"></div>
@@ -206,12 +254,12 @@
 </div>
 
 <script>
-/* ---------------- SLIDESHOW LOGIC ---------------- */
+/* SLIDESHOW */
 let slideIndex = 0;
 let slides = document.querySelectorAll(".slide");
 
 function showSlide(index) {
-    slides.forEach(slide => slide.classList.remove("active-slide"));
+    slides.forEach(s => s.classList.remove("active-slide"));
     slides[index].classList.add("active-slide");
 }
 
@@ -220,46 +268,30 @@ function moveSlide(direction) {
     showSlide(slideIndex);
 }
 
-setInterval(() => {
-    moveSlide(1);
-}, 4000); // Auto-slide every 4 seconds
+setInterval(() => moveSlide(1), 4000);
 
+/* CATEGORY LOADING */
+const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
 
-/* ---------------- CATEGORY LOGIC ---------------- */
-const allProducts = JSON.parse(localStorage.getItem("products")) || [];
-
-function openCategory(category) {
+function openCategory(name) {
     document.querySelectorAll(".product-section").forEach(s => s.style.display = "none");
+    document.querySelector(".category-grid").style.display = "none";
 
-    const section = document.getElementById(category);
-    section.innerHTML = "";
+    const section = document.getElementById(name);
+    section.innerHTML = `<div class='section-title'>${name.toUpperCase()}</div>`;
 
-    const title = document.createElement("div");
-    title.className = "section-title";
-    title.innerText = category.charAt(0).toUpperCase() + category.slice(1);
-    section.appendChild(title);
+    const list = allProducts.filter(p => p.toLowerCase().includes(name.toLowerCase()));
+    
+    const wrapper = document.createElement("div");
+    wrapper.className = "products";
 
-    const grid = document.createElement("div");
-    grid.className = "products";
-
-    const filtered = allProducts.filter(p => p.category === category);
-
-    filtered.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "product-card";
-
-        card.innerHTML = `
-            <img src="${p.image}" alt="">
-            <div class="price">
-                ${p.oldPrice ? `<span class='old-price'>$${p.oldPrice}</span>` : ""}
-                $${p.price}
-            </div>
-        `;
-
-        grid.appendChild(card);
+    list.forEach(html => {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        wrapper.appendChild(div);
     });
 
-    section.appendChild(grid);
+    section.appendChild(wrapper);
 
     const back = document.createElement("div");
     back.className = "back-btn";
@@ -268,10 +300,9 @@ function openCategory(category) {
         section.style.display = "none";
         document.querySelector(".category-grid").style.display = "grid";
     };
-    section.appendChild(back);
 
+    section.appendChild(back);
     section.style.display = "block";
-    document.querySelector(".category-grid").style.display = "none";
 }
 </script>
 
