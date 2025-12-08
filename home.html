@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KhanceptDesigns – Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Poppins, sans-serif;
+        background: #f8f8f8;
+    }
+
+    /* ---------------- SLIDESHOW ---------------- */
+    .slideshow-container {
+        width: 100%;
+        height: 330px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .slide {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .active-slide {
+        opacity: 1;
+    }
+
+    /* ARROWS */
+    .arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 40px;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        user-select: none;
+        z-index: 10;
+        background: rgba(0,0,0,0.3);
+        border-radius: 50%;
+    }
+
+    .arrow:hover {
+        background: rgba(0,0,0,0.6);
+    }
+
+    .arrow-left {
+        left: 15px;
+    }
+
+    .arrow-right {
+        right: 15px;
+    }
+
+    /* ---------------- CATEGORY GRID ---------------- */
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+    }
+
+    .category-tile {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: 0.25s ease;
+    }
+
+    .category-tile:hover {
+        background: #eaeaea;
+        transform: translateY(-5px);
+    }
+
+    /* PRODUCT SECTION */
+    .product-section {
+        display: none;
+        margin-top: 50px;
+    }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+    }
+
+    .product-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        padding: 15px;
+        text-align: center;
+    }
+
+    .product-card img {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .price {
+        margin-top: 10px;
+        font-weight: 600;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #888;
+        margin-right: 5px;
+    }
+
+    .back-btn {
+        margin-top: 25px;
+        display: inline-block;
+        padding: 10px 20px;
+        background: black;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- ========== SLIDESHOW HEADER ========== -->
+<div class="slideshow-container">
+
+    <!-- SLIDE 1 -->
+    <div class="slide active-slide">
+        <img src="https://via.placeholder.com/1600x600?text=Welcome+to+KhanceptDesigns">
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide">
+        <img src="https://via.placeholder.com/1600x600?text=Shop+Our+Latest+Collections">
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide">
+        <img src="https://via.placeholder.com/1600x600?text=Exclusive+Deals+Available+Now">
+    </div>
+
+    <!-- ARROWS -->
+    <div class="arrow arrow-left" onclick="moveSlide(-1)">&#10094;</div>
+    <div class="arrow arrow-right" onclick="moveSlide(1)">&#10095;</div>
+
+</div>
+
+<!-- ========== CATEGORIES BELOW SLIDESHOW ========== -->
+<div class="container">
+
+    <h1>Shop by Category</h1>
+
+    <div class="category-grid">
+        <div class="category-tile" onclick="openCategory('watches')">Watches</div>
+        <div class="category-tile" onclick="openCategory('electronics')">Electronics</div>
+        <div class="category-tile" onclick="openCategory('beauty')">Beauty</div>
+        <div class="category-tile" onclick="openCategory('accessories')">Accessories</div>
+    </div>
+
+    <!-- CATEGORY PRODUCT SECTIONS -->
+    <div id="watches" class="product-section"></div>
+    <div id="electronics" class="product-section"></div>
+    <div id="beauty" class="product-section"></div>
+    <div id="accessories" class="product-section"></div>
+
+</div>
+
+<script>
+/* ---------------- SLIDESHOW LOGIC ---------------- */
+let slideIndex = 0;
+let slides = document.querySelectorAll(".slide");
+
+function showSlide(index) {
+    slides.forEach(slide => slide.classList.remove("active-slide"));
+    slides[index].classList.add("active-slide");
+}
+
+function moveSlide(direction) {
+    slideIndex = (slideIndex + direction + slides.length) % slides.length;
+    showSlide(slideIndex);
+}
+
+setInterval(() => {
+    moveSlide(1);
+}, 4000); // Auto-slide every 4 seconds
+
+
+/* ---------------- CATEGORY LOGIC ---------------- */
+const allProducts = JSON.parse(localStorage.getItem("products")) || [];
+
+function openCategory(category) {
+    document.querySelectorAll(".product-section").forEach(s => s.style.display = "none");
+
+    const section = document.getElementById(category);
+    section.innerHTML = "";
+
+    const title = document.createElement("div");
+    title.className = "section-title";
+    title.innerText = category.charAt(0).toUpperCase() + category.slice(1);
+    section.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "products";
+
+    const filtered = allProducts.filter(p => p.category === category);
+
+    filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+            <img src="${p.image}" alt="">
+            <div class="price">
+                ${p.oldPrice ? `<span class='old-price'>$${p.oldPrice}</span>` : ""}
+                $${p.price}
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+
+    const back = document.createElement("div");
+    back.className = "back-btn";
+    back.innerText = "Back to Categories";
+    back.onclick = () => {
+        section.style.display = "none";
+        document.querySelector(".category-grid").style.display = "grid";
+    };
+    section.appendChild(back);
+
+    section.style.display = "block";
+    document.querySelector(".category-grid").style.display = "none";
+}
+</script>
+
+</body>
+</html>
