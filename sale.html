@@ -18,8 +18,15 @@
   nav ul li{display:inline-block;margin:0 20px;}
   nav ul li a{color:white;text-decoration:none;font-weight:600;font-size:1.1rem;transition:0.3s ease;}
   nav ul li a:hover{color:#aaa;}
+
+  /* Active tab style */
+  nav ul li a.active { color: #1E90FF; font-weight:700; }
+
   .container{width:90%;max-width:1200px;margin:50px auto;}
   .section-title{font-size:2.4rem;text-align:center;margin-bottom:40px;font-weight:700;}
+  .search-container{width:100%;max-width:500px;margin:0 auto 40px auto;}
+  #searchBar{width:100%;padding:14px 18px;font-size:1rem;border-radius:12px;border:2px solid #ccc;background:white;outline:none;transition:0.3s;}
+  #searchBar:focus{border-color:#000;box-shadow:0 0 10px rgba(0,0,0,0.15);}
   .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:35px;}
   .product-card{background:rgba(255,255,255,0.65);backdrop-filter:blur(12px);border-radius:20px;overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,0.15);transition: transform 0.35s ease, box-shadow 0.35s ease;}
   .product-card:hover{transform:translateY(-10px);box-shadow:0 15px 35px rgba(0,0,0,0.25);}
@@ -50,6 +57,11 @@
 
 <div class="container">
   <h2 class="section-title">Sale Products</h2>
+
+  <div class="search-container">
+    <input type="text" id="searchBar" placeholder="Search sale products...">
+  </div>
+
   <div class="product-grid" id="saleGrid"></div>
 </div>
 
@@ -58,31 +70,65 @@
 </footer>
 
 <script>
+// Load sale products
 const saleGrid = document.getElementById("saleGrid");
 const allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
-const saleProducts = allProducts.filter(prod => prod.salePrice && prod.oldPrice);
+const saleProducts = allProducts.filter(prod => prod.oldPrice && prod.salePrice);
 
-// Display sale products
-if(saleProducts.length === 0){
-  saleGrid.innerHTML = `<p style="text-align:center; padding:50px; font-size:1.2rem;">
-    No sale items yet. Please add products with a sale price in the Admin Editor.
-  </p>`;
-} else {
-  saleGrid.innerHTML = saleProducts.map(prod => `
-    <div class="product-card">
-      <img src="${prod.img}" alt="${prod.name}" />
-      <div class="product-info">
-        <h3>${prod.name}</h3>
-        <p>${prod.desc}</p>
-        <p style="font-size:1.1rem; margin-top:10px;">
-          <span style="text-decoration: line-through; color:#777;">$${prod.oldPrice}</span>
-          <span style="color:#d40000; font-weight:700; margin-left:10px;">$${prod.salePrice}</span>
-        </p>
-        <a href="${prod.link}">Buy Now</a>
+// Display products
+function displayProducts(grid, products){
+  if(products.length === 0){
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-size:1.2rem;">
+      No sale items yet. Please add products with a sale price in the Admin Editor.
+    </p>`;
+  } else {
+    grid.innerHTML = products.map(prod => `
+      <div class="product-card">
+        <img src="${prod.img}" alt="${prod.name}" />
+        <div class="product-info">
+          <h3>${prod.name}</h3>
+          <p>${prod.desc}</p>
+          <p style="font-size:1.1rem; margin-top:10px;">
+            <span style="text-decoration: line-through; color:#777;">$${prod.oldPrice}</span>
+            <span style="color:#d40000; font-weight:700; margin-left:10px;">$${prod.salePrice}</span>
+          </p>
+          <a href="${prod.link}">Buy Now</a>
+        </div>
       </div>
-    </div>
-  `).join("");
+    `).join("");
+  }
 }
+
+// Initial display
+displayProducts(saleGrid, saleProducts);
+
+// Live search
+document.getElementById("searchBar").addEventListener("keyup", function(){
+  const filter = this.value.toLowerCase();
+  const filtered = saleProducts.filter(prod =>
+    prod.name.toLowerCase().includes(filter) || prod.desc.toLowerCase().includes(filter)
+  );
+  displayProducts(saleGrid, filtered);
+});
+
+// Highlight active tab
+const navLinks = document.querySelectorAll("nav ul li a");
+const currentURL = window.location.pathname.split("/").pop();
+
+navLinks.forEach(link => {
+  const linkPage = link.getAttribute("href");
+  if(linkPage === currentURL){
+    link.classList.add("active");
+  } else {
+    link.classList.remove("active");
+  }
+
+  // Update active tab dynamically on click
+  link.addEventListener("click", () => {
+    navLinks.forEach(l => l.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
 </script>
 
 </body>
