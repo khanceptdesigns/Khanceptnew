@@ -289,6 +289,24 @@
     });
   });
 </script>
+  // --- AUTO-DETECT SALE PRODUCTS ---
+  function updateSaleProducts() {
+    const cards = document.querySelectorAll(".product-card");
+    let saleProducts = [];
 
+    cards.forEach(card => {
+      const oldPrice = card.querySelector("span[style*='line-through']");
+      const newPrice = card.querySelector("span[style*='color: #d40000']");
+      
+      if (oldPrice && newPrice) {
+        saleProducts.push(card.outerHTML);
+      }
+    });
+
+    localStorage.setItem("saleProducts", JSON.stringify(saleProducts));
+  }
+
+  updateSaleProducts();
+</script>
 </body>
 </html>
