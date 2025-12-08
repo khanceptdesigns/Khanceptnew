@@ -20,6 +20,7 @@ header {
   background: linear-gradient(135deg, #111 0%, #222 100%);
   color: white;
   text-align: center;
+  padding: 0 20px;
 }
 
 header h1 {
@@ -37,6 +38,19 @@ header p {
   color: #ccc;
   letter-spacing: 0.5px;
   opacity: 0.9;
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+  header { height: 140px; }
+  header h1 { font-size: 2.2rem; }
+  header p { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  header { height: 120px; }
+  header h1 { font-size: 1.8rem; }
+  header p { font-size: 0.9rem; }
 }
 
 /* Navigation */
@@ -64,17 +78,36 @@ nav ul li a.active{color:#1E90FF;font-weight:700;}
 .product-row::-webkit-scrollbar-track{background:transparent;}
 
 /* Product Card */
-.product-card{flex:0 0 200px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.1);transition:0.3s;}
+.product-card{
+  flex:0 0 200px;
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+}
+
 .product-card:hover{transform:translateY(-5px);}
 .product-card img{width:100%;height:180px;object-fit:contain;background:#f9f9f9;}
-.product-info {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* center price and button */
-  gap: 8px; /* spacing between price and button */
+.product-info{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end; /* push price/button to bottom */
+  align-items:center;
+  flex-grow:1;
+  gap:8px;
 }
-.product-info h3{margin:0 0 8px 0;font-size:1rem;font-weight:600;width:100%;text-align:center;}
+.product-info h3{
+  margin:0 0 8px 0;
+  font-size:1rem;
+  font-weight:600;
+  width:100%;
+  text-align:center;
+  flex-shrink:0;
+}
 .product-info .price{
   font-weight:700;
   color:#d40000;
