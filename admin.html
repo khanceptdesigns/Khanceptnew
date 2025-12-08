@@ -6,71 +6,17 @@
 <title>Admin Product Editor</title>
 
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    padding: 20px;
-  }
-
-  h1 {
-    text-align: center;
-    font-size: 2rem;
-  }
-
-  .admin-box {
-    max-width: 500px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-
-  label {
-    font-weight: bold;
-    display: block;
-    margin-top: 12px;
-  }
-
-  input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-
-  button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background: black;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: #444;
-  }
-
-  .success-message {
-    margin-top: 20px;
-    color: green;
-    text-align: center;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .success-show {
-    opacity: 1 !important;
-  }
+  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+  h1 { text-align: center; font-size: 2rem; }
+  .admin-box { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  label { font-weight: bold; display: block; margin-top: 12px; }
+  input, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+  button { margin-top: 20px; width: 100%; padding: 12px; background: black; color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
+  button:hover { background: #444; }
+  .success-message { margin-top: 20px; color: green; text-align: center; font-weight: bold; opacity: 0; transition: opacity 0.4s ease; }
+  .success-show { opacity: 1 !important; }
 </style>
 </head>
-
 <body>
 
 <h1>Admin Product Editor</h1>
@@ -102,13 +48,7 @@
 <script>
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g, function(m) {
-    return ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[m];
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
   });
 }
 
@@ -120,46 +60,35 @@ function addProduct() {
   const salePrice = escapeHTML(document.getElementById("salePrice").value.trim());
   const link = escapeHTML(document.getElementById("buyLink").value.trim());
 
-  if (!img || !name || !desc || !link) {
-    alert("Please fill out all required fields (image, name, description, link).");
+  if (!img || !name || !desc || !link || !salePrice) {
+    alert("Please fill out all required fields (image, name, description, sale price, link).");
     return;
   }
-
-  if (oldPrice && !salePrice) {
-    alert("If you enter an old price, you must enter a sale price.");
-    return;
-  }
-
-  if (!oldPrice && !salePrice) {
-    alert("Product must have at least a sale price.");
-    return;
-  }
-
-  const uniqueID = "prod_" + Date.now();
 
   const productHTML = `
-    <div class="product-card" data-id="${uniqueID}">
+    <div class="product-card">
       <img src="${img}" alt="${name}" />
       <div class="product-info">
         <h3>${name}</h3>
         <p>${desc}</p>
-
-        <p style="font-size: 1.1rem; margin-top: 10px;">
-          ${oldPrice ? `<span style="text-decoration: line-through; color:#777;">$${oldPrice}</span>` : ""}
-          <span style="color:#d40000; font-weight:700; margin-left:${oldPrice ? "10px" : "0"};">$${salePrice}</span>
+        <p style="font-size:1.1rem; margin-top:10px;">
+          ${oldPrice ? `<span style="text-decoration:line-through; color:#777;">$${oldPrice}</span>` : ""}
+          <span style="color:#d40000; font-weight:700; margin-left:${oldPrice ? "10px":"0"};">$${salePrice}</span>
         </p>
-
         <a href="${link}">Buy Now</a>
       </div>
     </div>
   `;
 
+  // Load existing products or initialize arrays
   let allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
-  allProducts.push(productHTML);
+  let saleProducts = JSON.parse(localStorage.getItem("saleProducts")) || [];
+
+  // Avoid duplicates
+  if (!allProducts.includes(productHTML)) allProducts.push(productHTML);
   localStorage.setItem("allProducts", JSON.stringify(allProducts));
 
-  if (oldPrice) {
-    let saleProducts = JSON.parse(localStorage.getItem("saleProducts")) || [];
+  if (oldPrice && !saleProducts.includes(productHTML)) {
     saleProducts.push(productHTML);
     localStorage.setItem("saleProducts", JSON.stringify(saleProducts));
   }
@@ -167,9 +96,9 @@ function addProduct() {
   const msg = document.getElementById("success");
   msg.textContent = "✅ Product added successfully!";
   msg.classList.add("success-show");
-
   setTimeout(() => msg.classList.remove("success-show"), 2000);
 
+  // Clear inputs
   document.getElementById("imgUrl").value = "";
   document.getElementById("productName").value = "";
   document.getElementById("productDesc").value = "";
