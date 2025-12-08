@@ -10,15 +10,14 @@
 
 <style>
   html {
-    scroll-behavior: smooth; /* Smooth scrolling */
+    scroll-behavior: smooth;
   }
 
-  /* Optional: offset for anchor scroll to avoid header overlap */
   :target::before {
     content: "";
     display: block;
-    height: 120px; /* height of your header + spacing */
-    margin-top: -120px; 
+    height: 120px;
+    margin-top: -120px;
   }
 
   body {
@@ -28,7 +27,6 @@
     color: #222;
   }
 
-  /* Modern Header */
   header {
     padding: 60px 20px;
     text-align: center;
@@ -43,13 +41,6 @@
     letter-spacing: -1px;
   }
 
-  header p {
-    margin-top: 12px;
-    font-size: 1.2rem;
-    opacity: 0.85;
-  }
-
-  /* Navigation Bar */
   nav {
     background: #000;
     padding: 15px 0;
@@ -72,7 +63,6 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 1.1rem;
-    transition: 0.3s ease;
   }
 
   nav ul li a:hover {
@@ -92,7 +82,6 @@
     font-weight: 700;
   }
 
-  /* Search Bar */
   .search-container {
     width: 100%;
     max-width: 500px;
@@ -107,22 +96,14 @@
     border: 2px solid #ccc;
     background: white;
     outline: none;
-    transition: 0.3s;
   }
 
-  #searchBar:focus {
-    border-color: #000;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-  }
-
-  /* Grid */
   .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 35px;
   }
 
-  /* Product Card */
   .product-card {
     background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(12px);
@@ -137,9 +118,7 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   }
 
-  /* Media */
-  .product-card img,
-  .product-card video {
+  .product-card img {
     width: 100%;
     height: 260px;
     object-fit: contain;
@@ -156,12 +135,6 @@
     font-weight: 600;
   }
 
-  .product-info p {
-    margin-top: 8px;
-    font-size: 0.95rem;
-    opacity: 0.85;
-  }
-
   .product-info a {
     display: inline-block;
     margin-top: 14px;
@@ -172,11 +145,6 @@
     font-weight: 600;
     border-radius: 10px;
     transition: 0.3s;
-  }
-
-  .product-info a:hover {
-    transform: translateY(-3px);
-    background: linear-gradient(135deg, #444 0%, #000 100%);
   }
 
   footer {
@@ -196,21 +164,18 @@
   <p>Product Promotion & Showcase</p>
 </header>
 
-<!-- Navigation Bar -->
 <nav>
   <ul>
     <li><a href="#">Home</a></li>
     <li><a href="#featured">Featured</a></li>
-   <li><a href="sale.html">Sale</a></li>
+    <li><a href="sale.html">Sale</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
-<!-- FEATURED SECTION -->
 <div class="container">
   <h2 id="featured" class="section-title">Featured Products</h2>
 
-  <!-- Search Bar -->
   <div class="search-container">
     <input type="text" id="searchBar" placeholder="Search products...">
   </div>
@@ -219,13 +184,13 @@
 
     <!-- PRODUCT 1 -->
     <div class="product-card">
-      <img src="https://www.dropbox.com/scl/fi/h8gjyos4xd369h5l7a5bg/Photo-Dec-07-2025-4-41-30-PM.jpg?rlkey=ylkrpglloxr2dg6xtlli7akkw&st=f0yt0nea&raw=1" alt="Movado Watch" />
+      <img src="https://www.dropbox.com/scl/fi/h8gjyos4xd369h5l7a5bg/Photo-Dec-07-2025-4-41-30-PM.jpg?raw=1" alt="Movado Watch" />
       <div class="product-info">
         <h3>Movado</h3>
-        <p>Movado Bold Quest Automatic Watch, Swiss Self-Winding Movement, Stainless Steel Bracelet 39mm</p>
-        <p style="font-size: 1.1rem; margin-top: 10px;">
-          <span style="text-decoration: line-through; color: #777;">$995</span>
-          <span style="color: #d40000; font-weight: 700; margin-left: 10px;">$796</span>
+        <p>Movado Bold Quest Automatic Watch</p>
+        <p>
+          <span style="text-decoration: line-through; color:#777;">$995</span>
+          <span style="color:#d40000; font-weight:700; margin-left:10px;">$796</span>
         </p>
         <a href="https://amzn.to/3KtUjL9">Buy Now</a>
       </div>
@@ -233,39 +198,39 @@
 
     <!-- PRODUCT 2 -->
     <div class="product-card">
-      <img src="https://www.dropbox.com/scl/fi/p42tbv80gbtq53yhi7e45/Photo-Dec-07-2025-5-19-46-PM.jpg?rlkey=mqiekmtc76us7j60x36s325p5&st=v5os1hlb&raw=1" alt="Movado Museum Classic" />
+      <img src="https://www.dropbox.com/scl/fi/p42tbv80gbtq53yhi7e45/Photo-Dec-07-2025-5-19-46-PM.jpg?raw=1" alt="Movado Museum Classic" />
       <div class="product-info">
         <h3>Movado</h3>
-        <p>Movado Museum Classic Men's Automatic Watch, Stainless Steel Bracelet, Self-Winding Luxury Timepiece - 40mm</p>
-        <p style="font-size: 1.1rem; margin-top: 10px;">
-          <span style="text-decoration: line-through; color: #777;">$1495</span>
-          <span style="color: #d40000; font-weight: 700; margin-left: 10px;">$1196</span>
+        <p>Movado Museum Classic Men's Automatic Watch</p>
+        <p>
+          <span style="text-decoration: line-through; color:#777;">$1495</span>
+          <span style="color:#d40000; font-weight:700; margin-left:10px;">$1196</span>
         </p>
         <a href="https://amzn.to/4awGZjC">Buy Now</a>
       </div>
     </div>
 
-    <!-- PRODUCT 4 -->
+    <!-- PRODUCT 3 -->
     <div class="product-card">
-      <img src="https://www.dropbox.com/scl/fi/fn2iqk6dlv8urqoxc70id/Photo-Dec-07-2025-2-42-00-PM.jpg?rlkey=lqj8hdh6pr9r1nv4rky2vuvwf&st=ovmcr0yx&raw=1" alt="APPLE IPAD AIR" />
+      <img src="https://www.dropbox.com/scl/fi/fn2iqk6dlv8urqoxc70id/Photo-Dec-07-2025-2-42-00-PM.jpg?raw=1" alt="iPad Air" />
       <div class="product-info">
         <h3>APPLE IPAD AIR</h3>
-        <p>Apple iPad Air 11-inch with M3 chip Built for Apple Intelligence, Liquid Retina Display, 128GB, 12MP Front/Back Camera, Wi-Fi 6E, Touch ID, All-Day Battery Life — Purple</p>
-        <p style="font-size: 1.1rem; margin-top: 10px;">
-          <span style="text-decoration: line-through; color: #777;">$599</span>
-          <span style="color: #d40000; font-weight: 700; margin-left: 10px;">$499</span>
+        <p>Apple iPad Air 11-inch with M3 chip</p>
+        <p>
+          <span style="text-decoration: line-through; color:#777;">$599</span>
+          <span style="color:#d40000; font-weight:700; margin-left:10px;">$499</span>
         </p>
         <a href="https://amzn.to/3KwQTHw">Buy Now</a>
       </div>
     </div>
 
-    <!-- PRODUCT — Stila Foundation -->
+    <!-- PRODUCT 4 (Stila) -->
     <div class="product-card">
-      <img src="https://www.dropbox.com/scl/fi/zl82k7qdq0maoy03k30hv/Photo-Dec-07-2025-5-44-08-PM.jpg?rlkey=keaxx7w7rvk9l9kstrq2zi908&st=6jsdb82m&raw=1" alt="Stila Stay All Day Foundation & Concealer">
+      <img src="https://www.dropbox.com/scl/fi/zl82k7qdq0maoy03k30hv/Photo-Dec-07-2025-5-44-08-PM.jpg?raw=1" alt="Stila Stay All Day Foundation & Concealer" />
       <div class="product-info">
         <h3>Stila Stay All Day Foundation & Concealer</h3>
         <p>Long-lasting, flawless-coverage foundation and concealer duo designed to stay in place all day. Lightweight, blendable formula with a natural matte finish.</p>
-        <p style="font-size: 1.1rem; font-weight: 700; color: #d40000; margin-top: 10px;">$42</p>
+        <p style="font-size:1.1rem; font-weight:700; color:#d40000; margin-top:10px;">$42</p>
         <a href="https://amzn.to/4rXVaEO">Buy Now</a>
       </div>
     </div>
@@ -277,8 +242,8 @@
   © 2025 KhanceptDesigns – All Rights Reserved
 </footer>
 
-<!-- SEARCH FILTER SCRIPT -->
 <script>
+  // Live Search
   document.getElementById("searchBar").addEventListener("keyup", function() {
     let filter = this.value.toLowerCase();
     let cards = document.querySelectorAll(".product-card");
@@ -288,16 +253,15 @@
       card.style.display = text.includes(filter) ? "block" : "none";
     });
   });
-</script>
-  // --- AUTO-DETECT SALE PRODUCTS ---
+
+  // Auto-detect sale products and store in localStorage
   function updateSaleProducts() {
     const cards = document.querySelectorAll(".product-card");
     let saleProducts = [];
 
     cards.forEach(card => {
       const oldPrice = card.querySelector("span[style*='line-through']");
-      const newPrice = card.querySelector("span[style*='color: #d40000']");
-      
+      const newPrice = card.querySelector("span[style*='#d40000']");
       if (oldPrice && newPrice) {
         saleProducts.push(card.outerHTML);
       }
@@ -308,5 +272,6 @@
 
   updateSaleProducts();
 </script>
+
 </body>
 </html>
