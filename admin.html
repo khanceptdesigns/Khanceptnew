@@ -18,6 +18,7 @@ table th{background:#eee;}
 button.edit, button.delete{padding:5px 10px;margin-right:5px;border:none;border-radius:6px;cursor:pointer;}
 button.edit{background:#1E90FF;color:white;} 
 button.delete{background:#d40000;color:white;}
+tr.dragging{opacity:0.5;}
 </style>
 </head>
 <body>
@@ -32,7 +33,7 @@ button.delete{background:#d40000;color:white;}
   <input type="number" id="oldPrice" placeholder="Old Price (optional)">
   <input type="text" id="link" placeholder="Product Link" required>
   <input type="text" id="category" placeholder="Category (e.g., Makeup, Skincare)">
-  <button type="submit">Add / Update Product</button>
+  <button type="submit">Add Product</button>
 </form>
 
 <table>
@@ -55,10 +56,15 @@ let editIndex = null;
 const form = document.getElementById("productForm");
 const table = document.getElementById("productTable");
 
+// Render table
 function renderTable(){
   table.innerHTML = "";
   allProducts.forEach((prod, index) => {
-    table.innerHTML += `<tr>
+    const tr = document.createElement("tr");
+    tr.setAttribute("draggable", "true");
+    tr.dataset.index = index;
+
+    tr.innerHTML = `
       <td>${prod.name}</td>
       <td>${prod.category || "Products"}</td>
       <td>$${prod.salePrice}</td>
@@ -67,15 +73,25 @@ function renderTable(){
         <button class="edit" onclick="editProduct(${index})">Edit</button>
         <button class="delete" onclick="deleteProduct(${index})">Delete</button>
       </td>
-    </tr>`;
+    `;
+
+    // Drag events
+    tr.addEventListener("dragstart", dragStart);
+    tr.addEventListener("dragover", dragOver);
+    tr.addEventListener("drop", drop);
+    tr.addEventListener("dragend", dragEnd);
+
+    table.appendChild(tr);
   });
 }
 
 function resetForm(){
   form.reset();
   editIndex = null;
+  form.querySelector("button").textContent = "Add Product";
 }
 
+// Add / Update product
 form.addEventListener("submit", function(e){
   e.preventDefault();
   const product = {
@@ -110,6 +126,7 @@ function editProduct(index){
   document.getElementById("link").value = prod.link;
   document.getElementById("category").value = prod.category || "";
   editIndex = index;
+  form.querySelector("button").textContent = "Update Product";
 }
 
 // Delete product
@@ -121,7 +138,35 @@ function deleteProduct(index){
   }
 }
 
-// Initial table render
+// Drag and drop sorting
+let dragSrcIndex = null;
+
+function dragStart(e){
+  dragSrcIndex = +this.dataset.index;
+  this.classList.add("dragging");
+}
+
+function dragOver(e){
+  e.preventDefault();
+}
+
+function drop(e){
+  const targetIndex = +this.dataset.index;
+  if(dragSrcIndex === targetIndex) return;
+
+  const draggedItem = allProducts[dragSrcIndex];
+  allProducts.splice(dragSrcIndex, 1);
+  allProducts.splice(targetIndex, 0, draggedItem);
+
+  localStorage.setItem("allProducts", JSON.stringify(allProducts));
+  renderTable();
+}
+
+function dragEnd(e){
+  this.classList.remove("dragging");
+}
+
+// Initial render
 renderTable();
 </script>
 
