@@ -59,11 +59,9 @@ tr.drag-over{outline:2px dashed #1E90FF;}
 const GITHUB_USERNAME = "KhanceptDesigns";
 const REPO_NAME = "Khanceptdesign";
 const FILE_PATH = "products.json";
+const GITHUB_TOKEN = "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"; // add your token here
 
-// PUT YOUR TOKEN HERE (never share publicly)
-const GITHUB_TOKEN = "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";
-
-// === GITHUB FUNCTIONS ===
+// --- GitHub API ---
 async function loadProducts() {
     const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`;
     const res = await fetch(url);
@@ -88,20 +86,19 @@ async function saveProducts(products) {
     });
 }
 
-// === ADMIN LOGIC ===
-let allProducts = [];
-let editIndex = null;
-
+// --- Admin logic ---
 const form = document.getElementById("productForm");
 const table = document.getElementById("productTable");
+let editId = null;
 
-async function renderTable() {
-    allProducts = await loadProducts();
+// Render table
+async function renderTable(){
+    const products = await loadProducts();
     table.innerHTML = "";
-    allProducts.forEach((prod, index) => {
+    products.forEach((prod, index) => {
         const tr = document.createElement("tr");
         tr.dataset.index = index;
-        tr.setAttribute("draggable", "true");
+        tr.setAttribute("draggable","true");
         tr.innerHTML = `
             <td>${prod.id}</td>
             <td>${prod.name}</td>
@@ -114,20 +111,19 @@ async function renderTable() {
                 <button class="move-top" onclick="moveToTop(${prod.id})">Move Top</button>
             </td>
         `;
-        // Drag events
         tr.addEventListener("dragstart", dragStart);
         tr.addEventListener("dragover", dragOver);
         tr.addEventListener("dragleave", dragLeave);
         tr.addEventListener("drop", drop);
         tr.addEventListener("dragend", dragEnd);
-
         table.appendChild(tr);
     });
 }
 
-// --- Form Add / Update ---
+// --- Add / Update product ---
 form.addEventListener("submit", async e => {
     e.preventDefault();
+    const products = await loadProducts();
     const id = Number(document.getElementById("productId").value);
     const product = {
         id,
@@ -140,21 +136,19 @@ form.addEventListener("submit", async e => {
         category: document.getElementById("category").value || "Products"
     };
 
-    const index = allProducts.findIndex(p => p.id === id);
-    if(index >= 0){
-        allProducts[index] = product;
-    } else {
-        allProducts.push(product);
-    }
+    const index = products.findIndex(p => Number(p.id) === id);
+    if(index >= 0) products[index] = product;
+    else products.push(product);
 
-    await saveProducts(allProducts);
+    await saveProducts(products);
     await renderTable();
     form.reset();
 });
 
 // --- Fill form to edit ---
 async function fillForm(id){
-    const product = (await loadProducts()).find(p => p.id === id);
+    const products = await loadProducts();
+    const product = products.find(p => Number(p.id) === Number(id));
     if(!product) return;
     document.getElementById("productId").value = product.id;
     document.getElementById("name").value = product.name;
@@ -169,35 +163,36 @@ async function fillForm(id){
 // --- Delete product ---
 async function deleteProduct(id){
     if(!confirm("Are you sure?")) return;
-    allProducts = allProducts.filter(p => p.id !== id);
-    await saveProducts(allProducts);
+    let products = await loadProducts();
+    products = products.filter(p => Number(p.id) !== Number(id));
+    await saveProducts(products);
     await renderTable();
 }
 
-// --- Move top ---
+// --- Move Top ---
 async function moveToTop(id){
-    const index = allProducts.findIndex(p => p.id === id);
+    let products = await loadProducts();
+    const index = products.findIndex(p => Number(p.id) === Number(id));
     if(index <= 0) return;
-    const [prod] = allProducts.splice(index,1);
-    allProducts.unshift(prod);
-    await saveProducts(allProducts);
+    const [prod] = products.splice(index,1);
+    products.unshift(prod);
+    await saveProducts(products);
     await renderTable();
 }
 
 // --- Drag & Drop ---
 let dragSrcIndex = null;
-
-function dragStart(e){ dragSrcIndex = +this.dataset.index; this.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; }
+function dragStart(e){ dragSrcIndex=+this.dataset.index; this.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; }
 function dragOver(e){ e.preventDefault(); this.classList.add("drag-over"); }
 function dragLeave(e){ this.classList.remove("drag-over"); }
 function drop(e){ 
-    e.preventDefault(); 
-    this.classList.remove("drag-over");
+    e.preventDefault(); this.classList.remove("drag-over"); 
+    let products = allProductsDrag || [];
     const targetIndex = +this.dataset.index;
     if(dragSrcIndex===targetIndex) return;
-    const [dragged] = allProducts.splice(dragSrcIndex,1);
-    allProducts.splice(targetIndex,0,dragged);
-    saveProducts(allProducts).then(renderTable);
+    const [dragged] = products.splice(dragSrcIndex,1);
+    products.splice(targetIndex,0,dragged);
+    saveProducts(products).then(renderTable);
 }
 function dragEnd(){ document.querySelectorAll("#productTable tr").forEach(r=>r.classList.remove("dragging","drag-over")); }
 
