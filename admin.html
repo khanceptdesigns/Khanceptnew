@@ -59,9 +59,9 @@ tr.drag-over{outline:2px dashed #1E90FF;}
 const GITHUB_USERNAME = "KhanceptDesigns";
 const REPO_NAME = "Khanceptdesign";
 const FILE_PATH = "products.json";
-const GITHUB_TOKEN = "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"; // add your token here
+const GITHUB_TOKEN = "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"; // replace with your own token
 
-// --- GitHub API ---
+// --- GitHub API functions ---
 async function loadProducts() {
     const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`;
     const res = await fetch(url);
@@ -89,7 +89,6 @@ async function saveProducts(products) {
 // --- Admin logic ---
 const form = document.getElementById("productForm");
 const table = document.getElementById("productTable");
-let editId = null;
 
 // Render table
 async function renderTable(){
@@ -123,7 +122,7 @@ async function renderTable(){
 // --- Add / Update product ---
 form.addEventListener("submit", async e => {
     e.preventDefault();
-    const products = await loadProducts();
+    let products = await loadProducts();
     const id = Number(document.getElementById("productId").value);
     const product = {
         id,
@@ -135,11 +134,9 @@ form.addEventListener("submit", async e => {
         link: document.getElementById("link").value,
         category: document.getElementById("category").value || "Products"
     };
-
     const index = products.findIndex(p => Number(p.id) === id);
     if(index >= 0) products[index] = product;
     else products.push(product);
-
     await saveProducts(products);
     await renderTable();
     form.reset();
@@ -187,18 +184,18 @@ function dragOver(e){ e.preventDefault(); this.classList.add("drag-over"); }
 function dragLeave(e){ this.classList.remove("drag-over"); }
 function drop(e){ 
     e.preventDefault(); this.classList.remove("drag-over"); 
-    let products = allProductsDrag || [];
     const targetIndex = +this.dataset.index;
     if(dragSrcIndex===targetIndex) return;
+    let products = await loadProducts(); // always reload
     const [dragged] = products.splice(dragSrcIndex,1);
     products.splice(targetIndex,0,dragged);
-    saveProducts(products).then(renderTable);
+    await saveProducts(products);
+    await renderTable();
 }
 function dragEnd(){ document.querySelectorAll("#productTable tr").forEach(r=>r.classList.remove("dragging","drag-over")); }
 
 // --- Initial load ---
 renderTable();
 </script>
-
 </body>
 </html>
