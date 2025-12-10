@@ -9,7 +9,7 @@
 body{font-family:"Poppins",sans-serif;background:#f4f4f4;margin:0;padding:20px;}
 h1{color:#222;}
 form{background:white;padding:20px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);max-width:500px;margin-bottom:40px;}
-form input, form select, form textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
+form input, form textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
 form button{padding:10px 15px;background:#000;color:white;border:none;border-radius:8px;cursor:pointer;}
 form button:hover{background:#333;}
 table{width:100%;border-collapse:collapse;margin-top:20px;}
@@ -55,13 +55,13 @@ tr.drag-over{outline:2px dashed #1E90FF;}
 </table>
 
 <script>
-// === CONFIG ===
+// --- CONFIG ---
 const GITHUB_USERNAME = "KhanceptDesigns";
 const REPO_NAME = "Khanceptdesign";
 const FILE_PATH = "products.json";
-const GITHUB_TOKEN = "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"; // replace with your own token
+const GITHUB_TOKEN = "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"; // replace with your personal access token
 
-// --- GitHub API functions ---
+// --- GitHub API ---
 async function loadProducts() {
     const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`;
     const res = await fetch(url);
@@ -86,41 +86,49 @@ async function saveProducts(products) {
     });
 }
 
-// --- Admin logic ---
+// --- DOM Elements ---
 const form = document.getElementById("productForm");
 const table = document.getElementById("productTable");
 
-// Render table
+// --- Render table ---
 async function renderTable(){
     const products = await loadProducts();
     table.innerHTML = "";
-    products.forEach((prod, index) => {
+    products.forEach((prod,index)=>{
         const tr = document.createElement("tr");
-        tr.dataset.index = index;
-        tr.setAttribute("draggable","true");
-        tr.innerHTML = `
+        tr.dataset.index=index;
+        tr.innerHTML=`
             <td>${prod.id}</td>
             <td>${prod.name}</td>
-            <td>${prod.category || "-"}</td>
+            <td>${prod.category||"-"}</td>
             <td>$${prod.salePrice}</td>
-            <td>${prod.oldPrice ? "$"+prod.oldPrice : "-"}</td>
+            <td>${prod.oldPrice? "$"+prod.oldPrice:"-"}</td>
             <td>
                 <button class="edit" onclick="fillForm(${prod.id})">Edit</button>
                 <button class="delete" onclick="deleteProduct(${prod.id})">Delete</button>
-                <button class="move-top" onclick="moveToTop(${prod.id})">Move Top</button>
             </td>
         `;
-        tr.addEventListener("dragstart", dragStart);
-        tr.addEventListener("dragover", dragOver);
-        tr.addEventListener("dragleave", dragLeave);
-        tr.addEventListener("drop", drop);
-        tr.addEventListener("dragend", dragEnd);
         table.appendChild(tr);
     });
 }
 
+// --- Fill form for edit ---
+async function fillForm(id){
+    const products = await loadProducts();
+    const product = products.find(p => Number(p.id)===Number(id));
+    if(!product) return;
+    document.getElementById("productId").value=product.id;
+    document.getElementById("name").value=product.name;
+    document.getElementById("desc").value=product.desc;
+    document.getElementById("img").value=product.img;
+    document.getElementById("salePrice").value=product.salePrice;
+    document.getElementById("oldPrice").value=product.oldPrice||"";
+    document.getElementById("link").value=product.link;
+    document.getElementById("category").value=product.category||"";
+}
+
 // --- Add / Update product ---
-form.addEventListener("submit", async e => {
+form.addEventListener("submit", async e=>{
     e.preventDefault();
     let products = await loadProducts();
     const id = Number(document.getElementById("productId").value);
@@ -134,67 +142,24 @@ form.addEventListener("submit", async e => {
         link: document.getElementById("link").value,
         category: document.getElementById("category").value || "Products"
     };
-    const index = products.findIndex(p => Number(p.id) === id);
-    if(index >= 0) products[index] = product;
+    const index = products.findIndex(p => Number(p.id)===id);
+    if(index>=0) products[index]=product;
     else products.push(product);
     await saveProducts(products);
     await renderTable();
     form.reset();
 });
 
-// --- Fill form to edit ---
-async function fillForm(id){
-    const products = await loadProducts();
-    const product = products.find(p => Number(p.id) === Number(id));
-    if(!product) return;
-    document.getElementById("productId").value = product.id;
-    document.getElementById("name").value = product.name;
-    document.getElementById("desc").value = product.desc;
-    document.getElementById("img").value = product.img;
-    document.getElementById("salePrice").value = product.salePrice;
-    document.getElementById("oldPrice").value = product.oldPrice || "";
-    document.getElementById("link").value = product.link;
-    document.getElementById("category").value = product.category || "";
-}
-
 // --- Delete product ---
 async function deleteProduct(id){
     if(!confirm("Are you sure?")) return;
     let products = await loadProducts();
-    products = products.filter(p => Number(p.id) !== Number(id));
+    products = products.filter(p => Number(p.id)!==Number(id));
     await saveProducts(products);
     await renderTable();
 }
 
-// --- Move Top ---
-async function moveToTop(id){
-    let products = await loadProducts();
-    const index = products.findIndex(p => Number(p.id) === Number(id));
-    if(index <= 0) return;
-    const [prod] = products.splice(index,1);
-    products.unshift(prod);
-    await saveProducts(products);
-    await renderTable();
-}
-
-// --- Drag & Drop ---
-let dragSrcIndex = null;
-function dragStart(e){ dragSrcIndex=+this.dataset.index; this.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; }
-function dragOver(e){ e.preventDefault(); this.classList.add("drag-over"); }
-function dragLeave(e){ this.classList.remove("drag-over"); }
-function drop(e){ 
-    e.preventDefault(); this.classList.remove("drag-over"); 
-    const targetIndex = +this.dataset.index;
-    if(dragSrcIndex===targetIndex) return;
-    let products = await loadProducts(); // always reload
-    const [dragged] = products.splice(dragSrcIndex,1);
-    products.splice(targetIndex,0,dragged);
-    await saveProducts(products);
-    await renderTable();
-}
-function dragEnd(){ document.querySelectorAll("#productTable tr").forEach(r=>r.classList.remove("dragging","drag-over")); }
-
-// --- Initial load ---
+// --- Initial render ---
 renderTable();
 </script>
 </body>
