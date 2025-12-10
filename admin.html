@@ -9,7 +9,7 @@
 body{font-family:"Poppins",sans-serif;background:#f4f4f4;margin:0;padding:20px;}
 h1{color:#222;}
 form{background:white;padding:20px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);max-width:500px;margin-bottom:40px;}
-form input, form select{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
+form input, form select, form textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
 form button{padding:10px 15px;background:#000;color:white;border:none;border-radius:8px;cursor:pointer;}
 form button:hover{background:#333;}
 table{width:100%;border-collapse:collapse;margin-top:20px;}
@@ -29,19 +29,21 @@ tr.drag-over{outline:2px dashed #1E90FF;}
 <h1>Admin Editor – KhanceptDesigns</h1>
 
 <form id="productForm">
+  <input type="number" id="productId" placeholder="Product ID (unique)" required>
   <input type="text" id="name" placeholder="Product Name" required>
-  <input type="text" id="desc" placeholder="Description">
+  <textarea id="desc" placeholder="Description"></textarea>
   <input type="text" id="img" placeholder="Image URL" required>
   <input type="number" id="salePrice" placeholder="Sale Price" required>
   <input type="number" id="oldPrice" placeholder="Old Price (optional)">
   <input type="text" id="link" placeholder="Product Link" required>
-  <input type="text" id="category" placeholder="Category (e.g., Makeup, Skincare)">
-  <button type="submit">Add Product</button>
+  <input type="text" id="category" placeholder="Category (optional)">
+  <button type="submit">Add / Update Product</button>
 </form>
 
 <table>
   <thead>
     <tr>
+      <th>ID</th>
       <th>Name</th>
       <th>Category</th>
       <th>Price</th>
@@ -53,141 +55,153 @@ tr.drag-over{outline:2px dashed #1E90FF;}
 </table>
 
 <script>
-let allProducts = JSON.parse(localStorage.getItem("allProducts")) || [];
+// === CONFIG ===
+const GITHUB_USERNAME = "KhanceptDesigns";
+const REPO_NAME = "Khanceptdesign";
+const FILE_PATH = "products.json";
+
+// PUT YOUR TOKEN HERE (never share publicly)
+const GITHUB_TOKEN = "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";
+
+// === GITHUB FUNCTIONS ===
+async function loadProducts() {
+    const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`;
+    const res = await fetch(url);
+    return res.json();
+}
+
+async function saveProducts(products) {
+    const fileInfoRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`);
+    const fileInfo = await fileInfoRes.json();
+
+    await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
+        method: "PUT",
+        headers: {
+            "Authorization": `Bearer ${GITHUB_TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: "Updated products",
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(products, null, 2)))),
+            sha: fileInfo.sha
+        })
+    });
+}
+
+// === ADMIN LOGIC ===
+let allProducts = [];
 let editIndex = null;
 
 const form = document.getElementById("productForm");
 const table = document.getElementById("productTable");
 
-// Render table
-function renderTable(){
-  table.innerHTML = "";
-  allProducts.forEach((prod, index) => {
-    const tr = document.createElement("tr");
-    tr.setAttribute("draggable", "true");
-    tr.dataset.index = index;
+async function renderTable() {
+    allProducts = await loadProducts();
+    table.innerHTML = "";
+    allProducts.forEach((prod, index) => {
+        const tr = document.createElement("tr");
+        tr.dataset.index = index;
+        tr.setAttribute("draggable", "true");
+        tr.innerHTML = `
+            <td>${prod.id}</td>
+            <td>${prod.name}</td>
+            <td>${prod.category || "-"}</td>
+            <td>$${prod.salePrice}</td>
+            <td>${prod.oldPrice ? "$"+prod.oldPrice : "-"}</td>
+            <td>
+                <button class="edit" onclick="fillForm(${prod.id})">Edit</button>
+                <button class="delete" onclick="deleteProduct(${prod.id})">Delete</button>
+                <button class="move-top" onclick="moveToTop(${prod.id})">Move Top</button>
+            </td>
+        `;
+        // Drag events
+        tr.addEventListener("dragstart", dragStart);
+        tr.addEventListener("dragover", dragOver);
+        tr.addEventListener("dragleave", dragLeave);
+        tr.addEventListener("drop", drop);
+        tr.addEventListener("dragend", dragEnd);
 
-    tr.innerHTML = `
-      <td>${prod.name}</td>
-      <td>${prod.category || "Products"}</td>
-      <td>$${prod.salePrice}</td>
-      <td>${prod.oldPrice ? "$"+prod.oldPrice : "-"}</td>
-      <td>
-        <button class="edit" onclick="editProduct(${index})">Edit</button>
-        <button class="delete" onclick="deleteProduct(${index})">Delete</button>
-        <button class="move-top" onclick="moveToTop(${index})">Move to Top</button>
-      </td>
-    `;
-
-    // Drag events
-    tr.addEventListener("dragstart", dragStart);
-    tr.addEventListener("dragover", dragOver);
-    tr.addEventListener("dragleave", dragLeave);
-    tr.addEventListener("drop", drop);
-    tr.addEventListener("dragend", dragEnd);
-
-    table.appendChild(tr);
-  });
+        table.appendChild(tr);
+    });
 }
 
-function resetForm(){
-  form.reset();
-  editIndex = null;
-  form.querySelector("button").textContent = "Add Product";
-}
+// --- Form Add / Update ---
+form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = Number(document.getElementById("productId").value);
+    const product = {
+        id,
+        name: document.getElementById("name").value,
+        desc: document.getElementById("desc").value,
+        img: document.getElementById("img").value,
+        salePrice: parseFloat(document.getElementById("salePrice").value),
+        oldPrice: document.getElementById("oldPrice").value ? parseFloat(document.getElementById("oldPrice").value) : null,
+        link: document.getElementById("link").value,
+        category: document.getElementById("category").value || "Products"
+    };
 
-// Add / Update product
-form.addEventListener("submit", function(e){
-  e.preventDefault();
-  const product = {
-    name: document.getElementById("name").value,
-    desc: document.getElementById("desc").value,
-    img: document.getElementById("img").value,
-    salePrice: parseFloat(document.getElementById("salePrice").value),
-    oldPrice: document.getElementById("oldPrice").value ? parseFloat(document.getElementById("oldPrice").value) : null,
-    link: document.getElementById("link").value,
-    category: document.getElementById("category").value || "Products"
-  };
+    const index = allProducts.findIndex(p => p.id === id);
+    if(index >= 0){
+        allProducts[index] = product;
+    } else {
+        allProducts.push(product);
+    }
 
-  if(editIndex !== null){
-    allProducts[editIndex] = product;
-  } else {
-    allProducts.push(product);
-  }
-
-  localStorage.setItem("allProducts", JSON.stringify(allProducts));
-  renderTable();
-  resetForm();
+    await saveProducts(allProducts);
+    await renderTable();
+    form.reset();
 });
 
-// Edit product
-function editProduct(index){
-  const prod = allProducts[index];
-  document.getElementById("name").value = prod.name;
-  document.getElementById("desc").value = prod.desc;
-  document.getElementById("img").value = prod.img;
-  document.getElementById("salePrice").value = prod.salePrice;
-  document.getElementById("oldPrice").value = prod.oldPrice || "";
-  document.getElementById("link").value = prod.link;
-  document.getElementById("category").value = prod.category || "";
-  editIndex = index;
-  form.querySelector("button").textContent = "Update Product";
+// --- Fill form to edit ---
+async function fillForm(id){
+    const product = (await loadProducts()).find(p => p.id === id);
+    if(!product) return;
+    document.getElementById("productId").value = product.id;
+    document.getElementById("name").value = product.name;
+    document.getElementById("desc").value = product.desc;
+    document.getElementById("img").value = product.img;
+    document.getElementById("salePrice").value = product.salePrice;
+    document.getElementById("oldPrice").value = product.oldPrice || "";
+    document.getElementById("link").value = product.link;
+    document.getElementById("category").value = product.category || "";
 }
 
-// Delete product
-function deleteProduct(index){
-  if(confirm("Are you sure you want to delete this product?")){
-    allProducts.splice(index,1);
-    localStorage.setItem("allProducts", JSON.stringify(allProducts));
-    renderTable();
-  }
+// --- Delete product ---
+async function deleteProduct(id){
+    if(!confirm("Are you sure?")) return;
+    allProducts = allProducts.filter(p => p.id !== id);
+    await saveProducts(allProducts);
+    await renderTable();
 }
 
-// Move to top
-function moveToTop(index){
-  if(index === 0) return;
-  const product = allProducts.splice(index, 1)[0];
-  allProducts.unshift(product);
-  localStorage.setItem("allProducts", JSON.stringify(allProducts));
-  renderTable();
+// --- Move top ---
+async function moveToTop(id){
+    const index = allProducts.findIndex(p => p.id === id);
+    if(index <= 0) return;
+    const [prod] = allProducts.splice(index,1);
+    allProducts.unshift(prod);
+    await saveProducts(allProducts);
+    await renderTable();
 }
 
-// Drag and drop
+// --- Drag & Drop ---
 let dragSrcIndex = null;
 
-function dragStart(e){
-  dragSrcIndex = +this.dataset.index;
-  this.classList.add("dragging");
-  e.dataTransfer.effectAllowed = "move";
+function dragStart(e){ dragSrcIndex = +this.dataset.index; this.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; }
+function dragOver(e){ e.preventDefault(); this.classList.add("drag-over"); }
+function dragLeave(e){ this.classList.remove("drag-over"); }
+function drop(e){ 
+    e.preventDefault(); 
+    this.classList.remove("drag-over");
+    const targetIndex = +this.dataset.index;
+    if(dragSrcIndex===targetIndex) return;
+    const [dragged] = allProducts.splice(dragSrcIndex,1);
+    allProducts.splice(targetIndex,0,dragged);
+    saveProducts(allProducts).then(renderTable);
 }
+function dragEnd(){ document.querySelectorAll("#productTable tr").forEach(r=>r.classList.remove("dragging","drag-over")); }
 
-function dragOver(e){
-  e.preventDefault();
-  this.classList.add("drag-over");
-}
-
-function dragLeave(e){
-  this.classList.remove("drag-over");
-}
-
-function drop(e){
-  e.preventDefault();
-  this.classList.remove("drag-over");
-  const targetIndex = +this.dataset.index;
-  if(dragSrcIndex === targetIndex) return;
-  const draggedItem = allProducts[dragSrcIndex];
-  allProducts.splice(dragSrcIndex, 1);
-  allProducts.splice(targetIndex, 0, draggedItem);
-  localStorage.setItem("allProducts", JSON.stringify(allProducts));
-  renderTable();
-}
-
-function dragEnd(e){
-  const rows = document.querySelectorAll("#productTable tr");
-  rows.forEach(row => row.classList.remove("dragging", "drag-over"));
-}
-
-// Initial render
+// --- Initial load ---
 renderTable();
 </script>
 
