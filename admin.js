@@ -2,13 +2,15 @@
 const GITHUB_USERNAME = "KhanceptDesigns"; // your GitHub username
 const REPO_NAME = "Khanceptdesign";        // your repo name
 const FILE_PATH = "products.json";         // path in repo
+const BRANCH = "main";                     // default branch
 
 let GITHUB_TOKEN = "";
 
 // --- Load products from GitHub
 async function loadProducts() {
     try {
-        const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`);
+        const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to load products from GitHub");
         return await res.json();
     } catch (err) {
@@ -27,27 +29,43 @@ async function saveProducts(products) {
 
         // Get file metadata
         const fileInfoRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
-            headers: { "Authorization": `Bearer ${GITHUB_TOKEN}` }
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Accept": "application/vnd.github+json"
+            }
         });
 
-        if (!fileInfoRes.ok) throw new Error("GitHub Save Error: " + await fileInfoRes.text());
+        if (!fileInfoRes.ok) {
+            const text = await fileInfoRes.text();
+            throw new Error("GitHub Save Error: " + text);
+        }
+
         const fileInfo = await fileInfoRes.json();
 
-        // Update file
+        // Upload new version
         const updateRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
             method: "PUT",
-            headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.github+json"
+            },
             body: JSON.stringify({
                 message: "Updated products",
                 content: btoa(unescape(encodeURIComponent(JSON.stringify(products, null, 2)))),
-                sha: fileInfo.sha
+                sha: fileInfo.sha,
+                branch: BRANCH
             })
         });
 
-        if(!updateRes.ok) throw new Error("GitHub Save Error: " + await updateRes.text());
+        if (!updateRes.ok) {
+            const text = await updateRes.text();
+            throw new Error("GitHub Save Error: " + text);
+        }
+
         return await updateRes.json();
 
-    } catch(err) {
+    } catch (err) {
         alert("Error saving products: " + err.message);
     }
 }
@@ -78,7 +96,6 @@ async function renderTable() {
 // --- Add or update product
 async function addProduct(product) {
     let products = await loadProducts();
-    // Assign unique ID if new
     if(!product.id) {
         product.id = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
     }
@@ -120,7 +137,11 @@ document.getElementById("productForm").addEventListener("submit", async e => {
     e.preventDefault();
     GITHUB_TOKEN = document.getElementById("token").value.trim();
 
-    const products = await loadProducts();
+    if(!GITHUB_TOKEN) {
+        alert("❌ Please enter your GitHub token.");
+        return;
+    }
+
     const newProduct = {
         id: Number(document.getElementById("productId").value) || null,
         name: document.getElementById("name").value,
