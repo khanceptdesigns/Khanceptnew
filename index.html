@@ -5,39 +5,109 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KhanceptDesigns – Home</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
 body {margin:0;font-family:"Poppins",sans-serif;background:#f4f4f4;color:#222;}
-header {display:flex;flex-direction:column;justify-content:center;align-items:center;height:180px;background:linear-gradient(135deg,#111 0%,#222 100%);color:white;text-align:center;padding:0 20px;}
-header h1 {font-size:3.2rem;font-weight:800;margin:0;letter-spacing:1px;text-shadow:1px 1px 4px rgba(0,0,0,0.4);}
-header p {margin-top:8px;font-size:1.2rem;font-weight:400;color:#ccc;letter-spacing:0.5px;opacity:0.9;}
-@media (max-width:768px){header{height:140px;}header h1{font-size:2.2rem;}header p{font-size:1rem;}}
-@media (max-width:480px){header{height:120px;}header h1{font-size:1.8rem;}header p{font-size:0.9rem;}}
-
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 180px;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  color: white;
+  text-align: center;
+  padding: 0 20px;
+}
+header h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+header p {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #ccc;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+@media (max-width: 768px) {
+  header { height: 140px; }
+  header h1 { font-size: 2.2rem; }
+  header p { font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  header { height: 120px; }
+  header h1 { font-size: 1.8rem; }
+  header p { font-size: 0.9rem; }
+}
 nav{background:#000;padding:15px 0;text-align:center;}
 nav ul{list-style:none;margin:0;padding:0;}
 nav ul li{display:inline-block;margin:0 20px;}
 nav ul li a{color:white;text-decoration:none;font-weight:600;font-size:1.1rem;transition:0.3s;}
 nav ul li a:hover{color:#aaa;}
 nav ul li a.active{color:#1E90FF;font-weight:700;}
-
 .container{width:95%;max-width:1400px;margin:40px auto;}
 .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;}
 .category-section{margin-bottom:50px;}
-.product-row{display:flex;overflow-x:auto;gap:15px;padding-bottom:10px;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.3) transparent;}
+.product-row{
+  display:flex;
+  overflow-x:auto;
+  gap:15px;
+  padding-bottom:10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.3) transparent;
+}
 .product-row::-webkit-scrollbar{height:8px;}
 .product-row::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.3);border-radius:4px;}
 .product-row::-webkit-scrollbar-track{background:transparent;}
-
-.product-card{flex:0 0 200px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.1);transition:0.3s;display:flex;flex-direction:column;cursor:pointer;}
+.product-card{
+  flex:0 0 180px;
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+  cursor:pointer;
+}
 .product-card:hover{transform:translateY(-5px);}
-.product-card img{width:100%;height:180px;object-fit:contain;background:#f9f9f9;}
-.product-info{padding:10px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;flex-grow:1;gap:8px;}
-.product-info h3{margin:0 0 8px 0;font-size:1rem;font-weight:600;width:100%;text-align:center;flex-shrink:0;}
-.product-info .price{font-weight:700;color:#d40000;font-size:1.1rem;}
-.product-info a{display:inline-block;padding:8px 16px;background:#000;color:white;text-decoration:none;border-radius:8px;font-weight:600;transition:0.3s;}
+.product-card img{width:100%;height:160px;object-fit:contain;background:#f9f9f9;}
+.product-info{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  flex-grow:1;
+  gap:6px;
+}
+.product-info h3{
+  margin:0 0 6px 0;
+  font-size:0.95rem;
+  font-weight:600;
+  width:100%;
+  text-align:center;
+}
+.product-info .price{
+  font-weight:700;
+  color:#d40000;
+  font-size:1rem;
+}
+.product-info a{
+  display:inline-block;
+  padding:6px 12px;
+  background:#000;
+  color:white;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:600;
+  transition:0.3s;
+}
 .product-info a:hover{background:#333;}
-
 .search-container{width:100%;max-width:500px;margin:20px auto;}
 #searchBar{width:100%;padding:10px 15px;font-size:1rem;border-radius:10px;border:2px solid #ccc;outline:none;}
 #searchBar:focus{border-color:#000;}
@@ -63,60 +133,57 @@ nav ul li a.active{color:#1E90FF;font-weight:700;}
 <input type="text" id="searchBar" placeholder="Search all products...">
 </div>
 
-<div class="container" id="categoryContainer">
-<!-- Categories will be dynamically inserted here -->
-</div>
+<div class="container" id="categoryContainer"></div>
 
 <footer style="text-align:center;padding:25px;background:#111;color:white;">
 © 2025 KhanceptDesigns – All Rights Reserved
 </footer>
 
 <script>
+// Fetch products.json from GitHub instead of localStorage
 const GITHUB_USERNAME = "KhanceptDesigns";
 const REPO_NAME = "Khanceptdesign";
 const FILE_PATH = "products.json";
+const BRANCH = "main";
 
-const categoryContainer = document.getElementById("categoryContainer");
 let allProducts = [];
 
-// --- Load products from GitHub
-async function loadProducts() {
-  try {
-    const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${FILE_PATH}`);
-    if(!res.ok) throw new Error("Failed to load products from GitHub");
-    return await res.json();
-  } catch(err) {
-    console.error(err);
-    categoryContainer.innerHTML = `<p style="text-align:center;padding:50px;">Error loading products.</p>`;
-    return [];
-  }
+async function loadProducts(){
+  try{
+    const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`);
+    if(!res.ok) throw new Error("Failed to load products");
+    allProducts = await res.json();
+    displayProductsByCategory();
+  }catch(err){ console.error(err); }
 }
 
-// --- Display products grouped by category
-function displayCategories(products){
+const categoryContainer = document.getElementById("categoryContainer");
+
+function displayProductsByCategory(filteredProducts){
+  const products = filteredProducts || allProducts;
   const categories = {};
-  products.forEach((prod,index)=>{
-    const cat = prod.category || "Products";
-    if(!categories[cat]) categories[cat]=[];
-    prod.index=index;
-    categories[cat].push(prod);
+  products.forEach((prod)=>{
+    const category = prod.category || "Products";
+    if(!categories[category]) categories[category]=[];
+    categories[category].push(prod);
   });
 
-  categoryContainer.innerHTML="";
-  for(const cat in categories){
-    const section=document.createElement("div");
+  categoryContainer.innerHTML = "";
+  for(const category in categories){
+    const prods = categories[category];
+    const section = document.createElement("div");
     section.classList.add("category-section");
-    section.innerHTML=`<h2 class="section-title">${cat}</h2>
+    section.innerHTML = `<h2 class="section-title">${category}</h2>
       <div class="product-row">
-        ${categories[cat].map(p=>`
-          <div class="product-card" onclick="goToFeatured(${p.index})">
-            <img src="${p.img}" alt="${p.name}">
+        ${prods.map(prod=>`
+          <div class="product-card" onclick="goToFeatured(${prod.id})">
+            <img src="${prod.img}" alt="${prod.name}">
             <div class="product-info">
-              <h3>${p.name}</h3>
+              <h3>${prod.name}</h3>
               <span class="price">
-                ${p.oldPrice? `<span style="text-decoration:line-through;color:#777;">$${p.oldPrice}</span> ` : ""}$${p.salePrice}
+                ${prod.oldPrice ? `<span style="text-decoration:line-through;color:#777;">$${prod.oldPrice}</span> ` : ""}$${prod.salePrice}
               </span>
-              <a href="${p.link}" target="_blank" onclick="event.stopPropagation()">Buy Now</a>
+              <a href="${prod.link}" target="_blank" onclick="event.stopPropagation()">Buy Now</a>
             </div>
           </div>`).join("")}
       </div>`;
@@ -124,40 +191,29 @@ function displayCategories(products){
   }
 }
 
-// --- Redirect to featured page
-function goToFeatured(index){
-  window.location.href = `featured.html?product=${index}`;
+function goToFeatured(id){
+  window.location.href = `featured.html?productId=${id}`;
 }
 
-// --- Initial load
-(async ()=>{
-  allProducts = await loadProducts();
-  displayCategories(allProducts);
-})();
-
-// --- Live search
+// Live search
 document.getElementById("searchBar").addEventListener("keyup", function(){
   const filter = this.value.toLowerCase();
-  const filtered = allProducts.filter(prod => prod.name.toLowerCase().includes(filter) || prod.desc.toLowerCase().includes(filter));
-  
-  const filteredCategories = {};
-  filtered.forEach(prod=>{
-    const cat = prod.category || "Products";
-    if(!filteredCategories[cat]) filteredCategories[cat]=[];
-    filteredCategories[cat].push(prod);
-  });
-  
-  displayCategories(Object.keys(filteredCategories).length ? filteredCategories : {});
+  const filtered = allProducts.filter(prod =>
+    prod.name.toLowerCase().includes(filter) || prod.desc.toLowerCase().includes(filter)
+  );
+  displayProductsByCategory(filtered);
 });
 
-// --- Highlight active nav tab
+// Highlight active nav
 const navLinks = document.querySelectorAll("nav ul li a");
-const currentPage = window.location.pathname.split("/").pop();
 navLinks.forEach(link=>{
-  const linkPage = link.getAttribute("href");
-  if(linkPage===currentPage || (currentPage==="" && linkPage==="index.html")) link.classList.add("active");
-  else link.classList.remove("active");
+  const currentPage = window.location.pathname.split("/").pop();
+  if(link.getAttribute("href")===currentPage || (currentPage==="" && link.getAttribute("href")==="index.html")){
+    link.classList.add("active");
+  } else { link.classList.remove("active"); }
 });
+
+loadProducts();
 </script>
 
 </body>
