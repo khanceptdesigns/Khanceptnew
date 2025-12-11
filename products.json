@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "Stila Stay All Day Foundation & Concealer",
+    "desc": "Stila Stay All Day Foundation & Concealer",
+    "img": "https://www.dropbox.com/scl/fi/zl82k7qdq0maoy03k30hv/Photo-Dec-07-2025-5-44-08-PM.jpg?rlkey=keaxx7w7rvk9l9kstrq2zi908&st=wxtgsyfq&raw=1",
+    "salePrice": 42,
+    "oldPrice": null,
+    "link": "https://amzn.to/48MDnHA",
+    "category": "Makeup"
+  }
+]
