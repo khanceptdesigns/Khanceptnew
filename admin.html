@@ -119,8 +119,7 @@ async function saveProducts(products){
     });
 
     if(!updateRes.ok) throw new Error(await updateRes.text());
-    // optional: automatically update featured.html & sale.html
-    updateFeaturedAndSale(products);
+    console.log("Products updated! Ensure featured.html & sale.html fetch products.json to reflect changes live.");
     return await updateRes.json();
 
   }catch(err){ alert("Error saving products: "+err.message); }
@@ -142,6 +141,7 @@ async function renderTable(){
       <td>
         <button class="edit-btn" onclick="fillForm(${p.id})">Edit</button>
         <button class="delete-btn" onclick="deleteProduct(${p.id})">Delete</button>
+        <button class="edit-btn" onclick="moveToTop(${p.id})">Move to Top</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -167,6 +167,19 @@ async function deleteProduct(id){
   products = products.filter(p=>p.id!==id);
   await saveProducts(products);
   alert("✅ Product deleted!");
+  renderTable();
+}
+
+// --- Move Product to Top
+async function moveToTop(id){
+  if(!GITHUB_TOKEN){ GITHUB_TOKEN = prompt("Enter GitHub token to move product:")?.trim(); if(!GITHUB_TOKEN) return alert("❌ Token required!"); }
+  let products = await loadProducts();
+  const index = products.findIndex(p => p.id === id);
+  if(index === -1) return alert("Product not found!");
+  const [product] = products.splice(index, 1);
+  products.unshift(product);
+  await saveProducts(products);
+  alert(`✅ Product "${product.name}" moved to top!`);
   renderTable();
 }
 
@@ -203,13 +216,6 @@ document.getElementById("productForm").addEventListener("submit", async e=>{
   await addProduct(product);
   e.target.reset();
 });
-
-// --- OPTIONAL: update featured.html & sale.html live
-async function updateFeaturedAndSale(products){
-  // You can implement code to rewrite HTML files dynamically via GitHub API
-  // Or just make your featured.html & sale.html fetch products.json dynamically (recommended)
-  console.log("Products updated! Ensure featured.html & sale.html fetch products.json to reflect changes live.");
-}
 
 // --- Initial render
 renderTable();
