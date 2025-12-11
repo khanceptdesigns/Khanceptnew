@@ -197,14 +197,36 @@ async function renderTable(){
 }
 
 // --- Move product to top
-async function moveToTop(id){
-  let products = await loadProducts();
-  const index = products.findIndex(p=>p.id===id);
-  if(index<0) return alert("Product not found!");
-  const [product] = products.splice(index,1);
-  products.unshift(product);
-  await saveProducts(products);
-  renderTable();
+async function moveToTop(id) {
+    // Load token manually (fix)
+    GITHUB_TOKEN = document.getElementById("token").value.trim();
+
+    if (!GITHUB_TOKEN) {
+        alert("❌ GitHub Token Missing. Enter your token in the form.");
+        return;
+    }
+
+    let products = await loadProducts();
+
+    const index = products.findIndex(p => Number(p.id) === Number(id));
+    if (index === -1) return alert("Product not found!");
+
+    // Remove the product
+    const selected = products.splice(index, 1)[0];
+
+    // Put at the top
+    products.unshift(selected);
+
+    // Save order
+    await saveProducts(products);
+
+    // Refresh table
+    renderTable();
+
+    // Notify featured/sale pages
+    localStorage.setItem("productsUpdated", Date.now());
+
+    alert("✅ Product moved to the top!");
 }
 
 // --- Add/Edit Product
