@@ -14,25 +14,39 @@ body {
 header { text-align:center; padding:40px 20px; background:#111; color:white; }
 header h1 { margin:0; font-size:2rem; }
 header p { margin-top:5px; opacity:0.8; }
-.container { max-width:1000px; margin:30px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+.container { max-width:1100px; margin:30px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
 
+/* Form styling */
 form input, form button {
     display:block; width:100%; padding:12px 15px; margin:8px 0; border-radius:8px; border:1px solid #ccc;
 }
 form button { background:#111; color:white; border:none; cursor:pointer; transition:0.3s;}
 form button:hover { background:#333; }
 
-/* Table styling */
-table { width:100%; border-collapse: collapse; margin-top:30px; font-size:0.85rem; }
-th, td { padding:10px; border:1px solid #ccc; text-align:left; vertical-align:middle; }
-th { background:#f0f0f0; font-weight:600; }
+/* Token input */
+.token-container { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
+.token-container input { flex:1; }
+.token-container button { flex:none; padding:10px; }
 
-/* Actions column */
-td:last-child { max-width:220px; white-space:nowrap; }
+/* Modern product cards table */
+.product-card-table { display:flex; flex-direction:column; gap:15px; }
+.product-card {
+    display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center;
+    padding:15px 20px; background:white; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.product-card:hover { transform: translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.12); }
 
-/* Buttons */
-.edit-btn, .delete-btn, .move-btn {
-    padding:5px 8px; margin:2px 2px 2px 0; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;
+.product-card .info { flex:1 1 60%; }
+.product-card .info h3 { margin:0 0 5px 0; font-size:1.1rem; font-weight:600; }
+.product-card .info p { margin:2px 0; font-size:0.85rem; opacity:0.8; }
+
+.product-card .prices { text-align:right; flex:0 0 120px; font-size:0.85rem; }
+.product-card .prices .old { text-decoration:line-through; color:#777; margin-right:5px; }
+.product-card .actions { display:flex; gap:5px; flex:0 0 auto; }
+.product-card button {
+    padding:5px 8px; border:none; border-radius:6px; cursor:pointer; font-size:0.75rem;
+    transition:0.2s;
 }
 .edit-btn { background:#1E90FF; color:white; }
 .delete-btn { background:#d40000; color:white; }
@@ -41,19 +55,10 @@ td:last-child { max-width:220px; white-space:nowrap; }
 .delete-btn:hover { background:#ff3b3b; }
 .move-btn:hover { background:#40c057; }
 
-/* Token input */
-.token-container { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
-.token-container input { flex:1; }
-.token-container button { flex:none; padding:10px; }
-
-/* Responsive table for small screens */
-@media(max-width:800px){
-    table, thead, tbody, th, td, tr { display:block; width:100%; }
-    tr { margin-bottom:15px; border-bottom:1px solid #ccc; }
-    th, td { text-align:right; padding-left:50%; position:relative; }
-    th::before, td::before { position:absolute; left:10px; width:45%; white-space:nowrap; font-weight:600; text-align:left; }
-    th::before { content:attr(data-label); }
-    td::before { content:attr(data-label); }
+/* Responsive adjustments */
+@media(max-width:700px){
+    .product-card { flex-direction:column; align-items:flex-start; }
+    .product-card .prices, .product-card .actions { text-align:left; margin-top:10px; }
 }
 </style>
 </head>
@@ -67,7 +72,6 @@ td:last-child { max-width:220px; white-space:nowrap; }
 <div class="container">
 <h2>Add / Edit Product</h2>
 
-<!-- GitHub Token Input -->
 <div class="token-container">
   <input type="password" id="token" placeholder="Enter GitHub Token" required>
   <button type="button" onclick="toggleToken()">Show/Hide</button>
@@ -85,20 +89,8 @@ td:last-child { max-width:220px; white-space:nowrap; }
     <button type="submit">Save Product</button>
 </form>
 
-<h2>Products Table</h2>
-<table>
-    <thead>
-        <tr>
-            <th data-label="ID">ID</th>
-            <th data-label="Name">Name</th>
-            <th data-label="Category">Category</th>
-            <th data-label="Sale Price">Sale Price</th>
-            <th data-label="Old Price">Old Price</th>
-            <th data-label="Actions">Actions</th>
-        </tr>
-    </thead>
-    <tbody id="productTable"></tbody>
-</table>
+<h2>Products Dashboard</h2>
+<div id="productTable" class="product-card-table"></div>
 
 <script>
 // --- CONFIG ---
@@ -109,32 +101,27 @@ const BRANCH = "main";
 let GITHUB_TOKEN = "";
 
 // --- Toggle token visibility
-function toggleToken(){
-  const t = document.getElementById("token");
-  t.type = t.type === "password" ? "text" : "password";
-}
+function toggleToken(){ const t=document.getElementById("token"); t.type=t.type==="password"?"text":"password"; }
 
 // --- Load products
 async function loadProducts(){
   try{
-    const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`);
+    const res=await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`);
     if(!res.ok) throw new Error("Failed to load products");
     return await res.json();
   }catch(err){ alert("Error loading products: "+err.message); return []; }
 }
 
-// --- Save products to GitHub
+// --- Save products
 async function saveProducts(products){
   if(!GITHUB_TOKEN){ alert("❌ GitHub token required!"); return; }
-
   try{
-    const fileInfoRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
+    const fileInfoRes=await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
       headers:{ "Authorization":`token ${GITHUB_TOKEN}`, "Accept":"application/vnd.github+json" }
     });
     if(!fileInfoRes.ok) throw new Error(await fileInfoRes.text());
-    const fileInfo = await fileInfoRes.json();
-
-    const updateRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
+    const fileInfo=await fileInfoRes.json();
+    const updateRes=await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`, {
       method:"PUT",
       headers:{ "Authorization":`token ${GITHUB_TOKEN}`, "Content-Type":"application/json", "Accept":"application/vnd.github+json" },
       body: JSON.stringify({
@@ -144,33 +131,36 @@ async function saveProducts(products){
         branch:BRANCH
       })
     });
-
     if(!updateRes.ok) throw new Error(await updateRes.text());
     return await updateRes.json();
-
   }catch(err){ alert("Error saving products: "+err.message); }
 }
 
-// --- Render table
+// --- Render product cards
 async function renderTable(){
   const products = await loadProducts();
-  const tbody = document.getElementById("productTable");
-  tbody.innerHTML = "";
+  const table = document.getElementById("productTable");
+  table.innerHTML = "";
   products.forEach(p=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.id}</td>
-      <td>${p.name}</td>
-      <td>${p.category||"-"}</td>
-      <td>$${p.salePrice}</td>
-      <td>${p.oldPrice? "$"+p.oldPrice:"-"}</td>
-      <td>
+    const div = document.createElement("div");
+    div.className = "product-card";
+    div.innerHTML = `
+      <div class="info">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <p>Category: ${p.category||"-"}</p>
+      </div>
+      <div class="prices">
+        ${p.oldPrice? `<span class="old">$${p.oldPrice}</span>` : "" }
+        <span class="sale">$${p.salePrice}</span>
+      </div>
+      <div class="actions">
         <button class="edit-btn" onclick="fillForm(${p.id})">Edit</button>
         <button class="delete-btn" onclick="deleteProduct(${p.id})">Delete</button>
         <button class="move-btn" onclick="moveToTop(${p.id})">Move to Top</button>
-      </td>
+      </div>
     `;
-    tbody.appendChild(tr);
+    table.appendChild(div);
   });
 }
 
@@ -198,7 +188,7 @@ async function deleteProduct(id){
 
 // --- Move product to top
 async function moveToTop(id){
-  if(!GITHUB_TOKEN){ GITHUB_TOKEN = prompt("Enter GitHub token to move product:")?.trim(); if(!GITHUB_TOKEN) return alert("❌ Token required!"); }
+  if(!GITHUB_TOKEN){ GITHUB_TOKEN = prompt("Enter GitHub token:")?.trim(); if(!GITHUB_TOKEN) return alert("❌ Token required!"); }
   let products = await loadProducts();
   const index = products.findIndex(p=>p.id===id);
   if(index===-1) return alert("Product not found!");
